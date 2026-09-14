@@ -6,7 +6,7 @@ than inventing a new one.
 
 ## 1. Define the model
 
-In `src/{{ package_name }}/models.py`, add a class next to `Item`,
+In `src/{{ package_name }}/models/`, add a class next to `Item`,
 using the same `Mapped[...]`/`mapped_column(...)` style:
 
 ```python
@@ -36,7 +36,7 @@ migration step needed.
 
 ## 2. Add request/response schemas
 
-In `src/{{ package_name }}/schemas.py`, mirroring `ItemCreate`/`ItemRead`:
+In `src/{{ package_name }}/schemas/`, mirroring `ItemCreate`/`ItemRead`:
 
 ```python
 class WidgetCreate(BaseModel):

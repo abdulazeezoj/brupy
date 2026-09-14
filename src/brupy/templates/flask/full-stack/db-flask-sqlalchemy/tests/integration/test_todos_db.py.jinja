@@ -1,0 +1,8 @@
+def test_todo_persists_across_requests(client) -> None:
+    create_response = client.post("/todos", data={"title": "Buy milk"})
+    assert create_response.status_code == 200
+
+    # A second, independent request re-renders the index — proves the
+    # todo is backed by persistence, not e.g. per-request state.
+    index_response = client.get("/")
+    assert b"Buy milk" in index_response.data

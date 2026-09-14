@@ -7,7 +7,8 @@ new resource rather than inventing a new one.
 
 ## 1. Define the schemas
 
-In `src/{{ package_name }}/schemas.py`, add the request/response models:
+In `src/{{ package_name }}/schemas/widgets.py` (re-exported from
+`schemas/__init__.py`), add the request/response models:
 
 ```python
 class WidgetCreate(BaseModel):
@@ -28,7 +29,8 @@ class WidgetRead(BaseModel):
 {% if database != "none" %}
 ## 2. Define the model
 
-In `src/{{ package_name }}/models.py`, add the {{ orm }} model (mirror the
+In `src/{{ package_name }}/models/widgets.py` (re-exported from
+`models/__init__.py`), add the {{ orm }} model (mirror the
 existing `Item` model's shape — same primary-key/column conventions).
 
 ## 3. Write the Blueprint
@@ -95,15 +97,16 @@ app.register_blueprint(widgets_bp)
 ## 4. Test it
 {% endif %}
 
-Add `tests/test_widgets.py`, mirroring `tests/test_main.py`'s `client`
-fixture usage (see `guides/testing.md`) — every new resource gets its
-own CRUD-cycle test (create, list, get, delete, and the 404 case), not
-just a smoke test of one happy path.
+Add `tests/e2e/test_widgets_flow.py`, mirroring
+`tests/unit/test_main.py`'s `client` fixture usage (see
+`guides/testing.md`) — every new resource gets its own CRUD-cycle test
+(create, list, get, delete, and the 404 case), not just a smoke test of
+one happy path.
 
 {% else %}
 # Guide: add a new route
 
-This template has one route (`/`, in `main.py`) and no `schemas.py` or
+This template has one route (`/`, in `main.py`) and no `schemas/` or
 `routes/` package — for anything past a route or two, generate (or
 compare against) the `rest-api` template instead of growing `main.py`
 by hand; it already has the resource/Blueprint/schema shape this guide
@@ -122,9 +125,9 @@ def health() -> dict[str, str]:
 
 ## Add a test
 
-In `tests/test_main.py` (or a new `tests/test_<name>.py`), mirror the
-existing test: build a client from the module-level `app` and assert on
-the JSON response.
+In `tests/unit/test_main.py` (or a new `tests/unit/test_<name>.py`),
+mirror the existing test: build a client from the module-level `app`
+and assert on the JSON response.
 
 ```python
 from {{ package_name }}.main import app

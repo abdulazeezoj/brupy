@@ -20,7 +20,10 @@ my-api/
 │       ├── __init__.py
 │       └── main.py          # FastAPI() app + GET /
 ├── tests/
-│   └── test_main.py         # TestClient hits GET / and checks the response
+│   └── unit/
+│       └── test_main.py      # TestClient hits GET / and checks the response
+├── scripts/
+│   └── README.md              # one-off/operational scripts
 ├── AGENTS.md                 # context for AI coding agents
 ├── README.md                  # this project's own run/test instructions
 ├── pyproject.toml

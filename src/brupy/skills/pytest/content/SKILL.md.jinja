@@ -76,8 +76,9 @@ see the `flask` skill's `guides/testing.md` instead of this one.
   one configured in `.env`. See `references/database-isolation.md`.
 {% else %}
 - **No `tests/conftest.py` here**: this template has no database
-  configured, so there's no fixture-managed database to isolate —
-  `tests/test_main.py` builds its client directly
+  configured, so there's no fixture-managed database to isolate — each
+  test module under `tests/` (e.g. `tests/unit/test_main.py`) builds
+  its client directly
   {% if framework == "fastapi" %}(`TestClient(app)`){% else %}(`app.test_client()`){% endif %}
   at module scope. If you add a database later, see
   `references/database-isolation.md` for the pattern to copy from the

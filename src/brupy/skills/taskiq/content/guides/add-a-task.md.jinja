@@ -83,6 +83,6 @@ async def test_send_email():
 ```
 
 For the endpoint itself, assert on the response shape the same way
-`tests/test_main.py` does for `/tasks/add` — a `200` and a `task_id` in
+`tests/unit/test_main.py` does for `/tasks/add` — a `200` and a `task_id` in
 the body, not that the task actually ran (it won't, in-process, during
 tests).

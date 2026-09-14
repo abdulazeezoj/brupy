@@ -37,7 +37,7 @@ matches the existing conventions instead of introducing a second style.
   once in `create_app()` via `app.register_blueprint(bp)`. Don't add
   routes directly on `app` outside `main.py`'s own `/` route — every
   resource gets its own Blueprint file, even a small one.
-- **Request/response models**: `src/{{ package_name }}/schemas.py` holds
+- **Request/response models**: `src/{{ package_name }}/schemas/` holds
   plain Pydantic models (`ItemCreate`, `ItemRead`). Flask has no
   built-in equivalent of FastAPI's automatic request parsing — every
   handler calls `Model.model_validate(request.get_json(...))` itself

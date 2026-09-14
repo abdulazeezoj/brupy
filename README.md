@@ -119,6 +119,7 @@ my-api/
   src/my_api/
     main.py              FastAPI entrypoint: app, lifespan, mounted routers
     worker.py            worker entrypoint (only if a worker is chosen)
+    scheduler.py          scheduler entrypoint (only if a worker is chosen)
     routes/               one module per HTTP resource
       items.py
     tasks/                 one module per background job (only if a worker is chosen)
@@ -127,9 +128,15 @@ my-api/
       config.py               settings (pydantic-settings)
       db.py                    async engine/session (only if a database is chosen)
       redis.py                 Redis client (only if redis resolves true)
-    schemas.py             Pydantic request/response models
-    models.py               ORM models (only if a database is chosen)
+    schemas/                Pydantic request/response models, one file per resource
+      items.py
+    models/                  ORM models, one file per resource (only if a database is chosen)
+      items.py
+  scripts/                 one-off/operational scripts (always present)
   tests/
+    unit/                   no I/O
+    e2e/                     full request flows
+    integration/              persistence through the real database session (only if a database is chosen)
   alembic/                 migrations (only if migrations is on)
   .agents/skills/          library-specific reference material for AI agents
   .claude/skills/          same skills, symlinked for Claude Code's own discovery path
@@ -139,7 +146,7 @@ my-api/
 ```
 
 `hello-world` is the same shape, minus the extras. `full-stack` swaps
-`routes/` + `schemas.py` for `routes/` returning HTML fragments plus
+`routes/` + `schemas/` for `routes/` returning HTML fragments plus
 `templates/` + `static/` (Jinja2 + HTMX, optionally Tailwind CSS). See
 [Templates](https://abdulazeezoj.github.io/brupy/project-templates/)
 for the exact generated layout of every framework and template

@@ -13,8 +13,8 @@ A layered Flask REST API with an opinionated, Next.js-inspired layout
 (PRODUCT_ARCH.md §4.4), the same spirit as `fastapi/rest-api`:
 `main.py`/`worker.py` are fixed entrypoints, `routes/`/`tasks/` are
 "one file per resource/job" folders, `core/` holds shared
-infrastructure — everything else (`schemas.py`, `models.py`) is a
-reasonable default, not an enforced convention. `pydantic-settings`
+infrastructure — `schemas/`/`models/` are already packages, one file
+per resource, mirroring `routes/`/`tasks/`. `pydantic-settings`
 config is always on. A single `items` resource (`GET/POST /items/`,
 `GET/DELETE /items/{id}`) backed by an in-memory store by default, or a
 real database if one is chosen — directly comparable to the FastAPI
@@ -94,8 +94,8 @@ reconsidered on its own merits rather than mirrored 1:1.
   out — `ItemRead` sets `model_config = ConfigDict(from_attributes=True)`
   so it can validate directly from an ORM object's attributes, not just
   a dict. This was chosen over "just use raw dicts" specifically so
-  `schemas.py` stays structurally identical to the FastAPI template's —
-  same file, same import, same mental model, only the call sites differ
+  `schemas/` stays structurally identical to the FastAPI template's —
+  same package shape, same import, same mental model, only the call sites differ
   (explicit `.model_validate()`/`.model_dump()` instead of FastAPI's
   automatic wiring).
 - **Entrypoint shape — `create_app()` factory, no module-level `app`**:
@@ -125,12 +125,14 @@ reconsidered on its own merits rather than mirrored 1:1.
 ```
 template.json                 options + layers (see above)
 README.md                     this file
-files/                         always rendered — main.py, core/config.py, schemas.py,
-                               routes/items.py (in-memory), tests/test_main.py,
+files/                         always rendered — main.py, core/config.py, schemas/,
+                               routes/items.py (in-memory), scripts/README.md,
+                               tests/unit/test_main.py, tests/e2e/test_items_flow.py,
                                env.jinja (-> .env + .env.example)
 docker/                         iff --docker
 db-flask-sqlalchemy/             iff orm == flask-sqlalchemy — overrides routes/items.py,
-                                 adds core/db.py + top-level models.py
+                                 adds core/db.py + models/, scripts/seed.py,
+                                 tests/integration/test_items_db.py
 db-sqlalchemy/                   iff orm == sqlalchemy (manual) — same shape, raw
                                  SQLAlchemy Core/ORM + scoped_session
 migrations-flask-sqlalchemy/       iff migrations && orm == flask-sqlalchemy — Flask-Migrate
@@ -138,8 +140,9 @@ migrations-flask-sqlalchemy/       iff migrations && orm == flask-sqlalchemy —
                                    the Migrate extension)
 migrations-sqlalchemy/             iff migrations && orm == sqlalchemy — bare Alembic
                                    (alembic/, same shape as fastapi/rest-api's, sync)
-worker-celery/                     iff worker == celery — worker.py, tasks/example.py;
-                                   worker.py branches on `broker` (redis/rabbitmq)
+worker-celery/                     iff worker == celery — worker.py, scheduler.py,
+                                   tasks/example.py; worker.py branches on
+                                   `broker` (redis/rabbitmq)
 redis/                              iff redis resolves true — core/redis.py client (sync)
 ```
 
@@ -157,12 +160,15 @@ The **generated project's** layout (what a developer actually sees) is:
 src/{{package_name}}/
   main.py              Flask entrypoint — create_app() factory only, no module-level app
   worker.py            Celery entrypoint — fixed name/location (iff a worker is chosen)
+  scheduler.py          Celery Beat entrypoint (iff a worker is chosen)
   routes/               one module per HTTP resource (Flask Blueprints)
   tasks/                 one module per background job (iff a worker is chosen)
   core/                   shared infrastructure: config.py, db.py, redis.py
-  schemas.py             Pydantic contracts — a plain default, not enforced
-  models.py                {orm} models — same, iff a database is chosen
+  schemas/                Pydantic contracts, one file per resource
+  models/                  {orm} models, one file per resource — iff a database is chosen
 migrations/ or alembic/    iff migrations — dir name depends on orm (see above)
+scripts/                  one-off/operational scripts — always present, plus
+                           seed.py iff a database is chosen
 ```
 
 ## Six real gotchas found while building this template — don't regress them
@@ -337,7 +343,7 @@ option's `when` can only reference **earlier** options' resolved values
 Following the opinionated layout: a new `POST /widgets` resource is a
 new `routes/widgets.py` (a new `Blueprint`, + one
 `app.register_blueprint(...)` line in `main.py`'s `create_app()`), a new
-`models.py`/`schemas.py` addition (or split into
-`models/widgets.py`/`schemas/widgets.py` once there's enough of them to
-warrant folders — not enforced), and — if it needs background work — a
-new `tasks/widgets.py` (+ one import line in `worker.py`, see gotcha 5).
+`models/widgets.py`/`schemas/widgets.py` addition (each re-exported
+from that package's `__init__.py`), and — if it needs background
+work — a new `tasks/widgets.py` (+ one import line in `worker.py`, see
+gotcha 5).

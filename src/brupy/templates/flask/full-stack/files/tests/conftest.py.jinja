@@ -1,0 +1,12 @@
+import pytest
+
+from {{ package_name }}.routes import todos as todos_module
+
+
+@pytest.fixture(autouse=True)
+def _reset_todos() -> None:
+    """Each test gets an empty in-memory store — this module-level dict
+    would otherwise leak state between tests (there's no request-scoped
+    reset the way a real database session gets)."""
+    todos_module._todos.clear()
+    todos_module._next_id = 1

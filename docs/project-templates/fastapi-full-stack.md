@@ -40,6 +40,7 @@ See [Styling](#styling-cssvanilla-vs-csstailwind) below.
   src/{{ package_name }}/
     main.py              FastAPI entrypoint — app, lifespan, mounted routers, /static mount
     worker.py            worker entrypoint (iff a worker is chosen)
+    scheduler.py          scheduler entrypoint (iff a worker is chosen)
     routes/               one module per HTTP resource
       todos.py              returns HTML/fragments, not JSON
     templates/             Jinja2 templates, rendered via core/templates.py
@@ -59,20 +60,25 @@ See [Styling](#styling-cssvanilla-vs-csstailwind) below.
       templates.py             the shared Jinja2Templates instance — always
       db.py                    async engine/session (iff a database is chosen)
       redis.py                 Redis client (iff redis resolves true)
-    models.py               {orm} models (iff a database is chosen)
+    models/                  {orm} models, one file per resource (iff a database is chosen)
+      todos.py
+  scripts/                 one-off/operational scripts — always present, plus seed.py (iff a database is chosen)
   tests/
+    unit/                    no I/O
+    e2e/                      full request flows
+    integration/               persistence through the real database session (iff a database is chosen)
   alembic/                 migrations (iff migrations is on)
   AGENTS.md
   Dockerfile               (iff --docker)
 ```
 
-No `schemas.py`: there's no separate request/response contract to
+No `schemas/`: there's no separate request/response contract to
 declare the way `rest-api` needs one for its JSON payloads. The
 in-memory layer's `Todo` is a plain `@dataclass` defined right in
-`routes/todos.py`; the DB-backed layers pass their `models.py` `Todo`
-straight into the template as the render context. One fewer file, one
-fewer thing to keep in sync, because this template genuinely has no use
-for it.
+`routes/todos.py`; the DB-backed layers pass their `models/todos.py`
+`Todo` straight into the template as the render context. One fewer
+package, one fewer thing to keep in sync, because this template
+genuinely has no use for it.
 
 ## Why `templates/` and `static/` files have no `.jinja` suffix
 

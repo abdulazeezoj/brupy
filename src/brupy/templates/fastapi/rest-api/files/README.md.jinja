@@ -47,7 +47,7 @@ no external database needed to run the suite.
 ## Migrations
 
 Run this once before starting the app for the first time — it generates
-the initial migration from the models in `src/{{ package_name }}/models.py`
+the initial migration from the models in `src/{{ package_name }}/models/`
 and applies it, creating the schema:
 
 ```
@@ -120,6 +120,7 @@ src/{{ package_name }}/
   main.py                 FastAPI entrypoint — app, lifespan, mounted routers
 {% if worker != "none" %}
   worker.py               {{ worker }} entrypoint — broker/app setup
+  scheduler.py             {{ worker }} scheduler — decides when to enqueue tasks
 {% endif %}
   routes/                  one module per resource
     items.py                example resource
@@ -135,11 +136,19 @@ src/{{ package_name }}/
   tasks/                    one module per background job
     example.py                the /tasks/add demo task
 {% endif %}
-  schemas.py               Pydantic request/response models
+  schemas/                  Pydantic request/response models, one file per resource
+    items.py                 example resource
 {% if database != "none" %}
-  models.py                 {{ orm }} models
+  models/                    {{ orm }} models, one file per resource
+    items.py                  example resource
 {% endif %}
-tests/                     tests
+scripts/                   one-off/operational scripts
+tests/
+  unit/                      no I/O
+  e2e/                       full request flows
+{% if database != "none" %}
+  integration/               persistence through the real database session
+{% endif %}
 {% if migrations %}
 alembic/                    migrations
 {% endif %}

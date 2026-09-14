@@ -151,5 +151,5 @@ returned from a `2xx` route to JSON. That shortcut is fine for a route
 this simple; once you're validating input or returning anything with a
 real shape (an id, nested fields), reach for explicit Pydantic
 models + `jsonify(...)`, the way the `rest-api` template's
-`schemas.py`/routes do, rather than passing dicts around by hand.
+`schemas/`/routes do, rather than passing dicts around by hand.
 {% endif %}

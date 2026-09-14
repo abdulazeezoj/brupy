@@ -100,7 +100,7 @@ def test_render_creates_expected_files(tmp_path: Path):
         Path(".gitignore"),
         Path("src/my_api/__init__.py"),
         Path("src/my_api/main.py"),
-        Path("tests/test_main.py"),
+        Path("tests/unit/test_main.py"),
     }
     # Subset check, not exact equality — hello-world also always pulls
     # in the flask/pytest skills (see test_render_includes_expected_skills).
@@ -165,7 +165,7 @@ def test_render_substitutes_package_name(tmp_path: Path):
     assert "Flask(__name__)" in main_py
     assert '{"message": "Hello, World!"}' in main_py
 
-    test_py = (target / "tests/test_main.py").read_text()
+    test_py = (target / "tests/unit/test_main.py").read_text()
     assert "from my_api.main import app" in test_py
 
     readme = (target / "README.md").read_text()

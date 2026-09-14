@@ -1,0 +1,26 @@
+"""Seed the database with a couple of example rows.
+
+Run: `uv run python scripts/seed.py`
+"""
+
+from {{ package_name }}.core.db import get_session
+from {{ package_name }}.main import create_app
+from {{ package_name }}.models import Item
+
+
+def main() -> None:
+    app = create_app()
+    with app.app_context():
+        session = get_session()
+        session.add_all(
+            [
+                Item(name="Widget", description="A thing"),
+                Item(name="Gadget", description="Another thing"),
+            ]
+        )
+        session.commit()
+    print("Seeded 2 items.")
+
+
+if __name__ == "__main__":
+    main()

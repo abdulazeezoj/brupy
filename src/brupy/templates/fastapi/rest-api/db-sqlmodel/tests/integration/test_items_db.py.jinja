@@ -1,0 +1,15 @@
+from httpx import AsyncClient
+
+
+async def test_item_persists_across_requests(client: AsyncClient) -> None:
+    create_response = await client.post(
+        "/items/", json={"name": "Widget", "description": "A thing"}
+    )
+    item_id = create_response.json()["id"]
+
+    # A second, independent request re-fetches through the real
+    # database session — proves the API is backed by persistence,
+    # not e.g. per-request state.
+    get_response = await client.get(f"/items/{item_id}")
+    assert get_response.status_code == 200
+    assert get_response.json()["name"] == "Widget"

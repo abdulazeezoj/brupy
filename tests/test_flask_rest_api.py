@@ -161,8 +161,11 @@ class TestRestApiRender:
             "src/my_api/main.py",
             "src/my_api/routes/__init__.py",
             "src/my_api/routes/items.py",
-            "src/my_api/schemas.py",
-            "tests/test_main.py",
+            "src/my_api/schemas/__init__.py",
+            "src/my_api/schemas/items.py",
+            "scripts/README.md",
+            "tests/unit/test_main.py",
+            "tests/e2e/test_items_flow.py",
         }
         routes = (target / "src/my_api/routes/items.py").read_text()
         assert "_items" in routes  # the in-memory store
@@ -208,12 +211,18 @@ class TestRestApiRender:
             "src/my_api/core/config.py",
             "src/my_api/core/db.py",
             "src/my_api/main.py",
-            "src/my_api/models.py",
+            "src/my_api/models/__init__.py",
+            "src/my_api/models/items.py",
             "src/my_api/routes/__init__.py",
             "src/my_api/routes/items.py",
-            "src/my_api/schemas.py",
+            "src/my_api/schemas/__init__.py",
+            "src/my_api/schemas/items.py",
+            "scripts/README.md",
+            "scripts/seed.py",
             "tests/conftest.py",
-            "tests/test_main.py",
+            "tests/unit/test_main.py",
+            "tests/e2e/test_items_flow.py",
+            "tests/integration/test_items_db.py",
         }
 
         routes = (target / "src/my_api/routes/items.py").read_text()
@@ -249,12 +258,18 @@ class TestRestApiRender:
             "src/my_api/core/config.py",
             "src/my_api/core/db.py",
             "src/my_api/main.py",
-            "src/my_api/models.py",
+            "src/my_api/models/__init__.py",
+            "src/my_api/models/items.py",
             "src/my_api/routes/__init__.py",
             "src/my_api/routes/items.py",
-            "src/my_api/schemas.py",
+            "src/my_api/schemas/__init__.py",
+            "src/my_api/schemas/items.py",
+            "scripts/README.md",
+            "scripts/seed.py",
             "tests/conftest.py",
-            "tests/test_main.py",
+            "tests/unit/test_main.py",
+            "tests/e2e/test_items_flow.py",
+            "tests/integration/test_items_db.py",
         }
 
         db_py = (target / "src/my_api/core/db.py").read_text()
@@ -302,11 +317,15 @@ class TestRestApiRender:
             "src/my_api/main.py",
             "src/my_api/routes/__init__.py",
             "src/my_api/routes/items.py",
-            "src/my_api/schemas.py",
+            "src/my_api/schemas/__init__.py",
+            "src/my_api/schemas/items.py",
             "src/my_api/tasks/__init__.py",
             "src/my_api/tasks/example.py",
             "src/my_api/worker.py",
-            "tests/test_main.py",
+            "src/my_api/scheduler.py",
+            "scripts/README.md",
+            "tests/unit/test_main.py",
+            "tests/e2e/test_items_flow.py",
         }
 
         worker_py = (target / "src/my_api/worker.py").read_text()
@@ -389,12 +408,16 @@ class TestRestApiRender:
 
         for expected in [
             "src/my_api/core/db.py",
-            "src/my_api/models.py",
+            "src/my_api/models/__init__.py",
+            "src/my_api/models/items.py",
             "migrations/alembic.ini",
             "migrations/env.py",
             "src/my_api/worker.py",
+            "src/my_api/scheduler.py",
             "src/my_api/tasks/example.py",
             "src/my_api/core/redis.py",
+            "scripts/README.md",
+            "scripts/seed.py",
         ]:
             assert Path(expected) in created, expected
 
@@ -418,13 +441,17 @@ class TestRestApiRender:
 
         for expected in [
             "src/my_api/core/db.py",
-            "src/my_api/models.py",
+            "src/my_api/models/__init__.py",
+            "src/my_api/models/items.py",
             "alembic.ini",
             "alembic/env.py",
             "alembic/script.py.mako",
             "alembic/versions/.gitkeep",
             "src/my_api/worker.py",
+            "src/my_api/scheduler.py",
             "src/my_api/tasks/example.py",
+            "scripts/README.md",
+            "scripts/seed.py",
         ]:
             assert Path(expected) in created, expected
         assert Path("src/my_api/core/redis.py") not in created

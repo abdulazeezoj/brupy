@@ -1,0 +1,10 @@
+def test_item_persists_across_requests(client) -> None:
+    create_response = client.post("/items/", json={"name": "Widget", "description": "A thing"})
+    item_id = create_response.get_json()["id"]
+
+    # A second, independent request re-fetches through the real
+    # database session — proves the API is backed by persistence,
+    # not e.g. per-request state.
+    get_response = client.get(f"/items/{item_id}")
+    assert get_response.status_code == 200
+    assert get_response.get_json()["name"] == "Widget"

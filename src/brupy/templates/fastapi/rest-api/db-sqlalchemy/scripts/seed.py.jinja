@@ -1,0 +1,26 @@
+"""Seed the database with a couple of example rows.
+
+Run: `uv run python scripts/seed.py`
+"""
+
+import asyncio
+
+from {{ package_name }}.core.db import async_session_maker, init_db
+from {{ package_name }}.models import Item
+
+
+async def main() -> None:
+    await init_db()
+    async with async_session_maker() as session:
+        session.add_all(
+            [
+                Item(name="Widget", description="A thing"),
+                Item(name="Gadget", description="Another thing"),
+            ]
+        )
+        await session.commit()
+    print("Seeded 2 items.")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -151,6 +151,7 @@ Every place the factory shows up:
 src/{package_name}/
   main.py              Flask entrypoint — create_app() factory, no module-level app
   worker.py            Celery entrypoint (iff worker == celery)
+  scheduler.py          Celery Beat entrypoint (iff worker == celery)
   routes/               one module per HTTP resource — Flask Blueprints
     items.py              the example resource
   core/                  shared infrastructure
@@ -159,11 +160,16 @@ src/{package_name}/
     redis.py                Redis client (iff redis resolves true)
   tasks/                 one module per background job (iff worker == celery)
     example.py             the /tasks/add demo task
-  schemas.py             Pydantic request/response models
-  models.py               {orm} models (iff database != none)
+  schemas/               Pydantic request/response models, one file per resource
+    items.py
+  models/                 {orm} models, one file per resource (iff database != none)
+    items.py
 migrations/ or alembic/  iff migrations — directory name depends on orm, see below
+scripts/                 one-off/operational scripts — always present, plus seed.py (iff database != none)
 tests/
-  test_main.py
+  unit/                   no I/O
+  e2e/                     full request flows
+  integration/              persistence through the real database session (iff database != none)
   conftest.py             (iff database != none — the isolated-db client fixture)
 AGENTS.md
 Dockerfile                iff --docker
@@ -174,12 +180,11 @@ brupy-generated FastAPI project and a brupy-generated Flask project should
 find the same landmark folder for "where HTTP resources live," even
 though the *contents* are genuinely different (`Blueprint(...)` objects
 registered via `app.register_blueprint(...)` in `create_app()`, not
-FastAPI routers). `core/`/`tasks/`/`models.py`/`schemas.py` follow the
+FastAPI routers). `core/`/`tasks/`/`models/`/`schemas/` follow the
 same [opinionated layout](index.md) as every other template: `main.py`,
 `worker.py`, `routes/`, and `tasks/` are fixed, load-bearing names; `core/`
-is shared infrastructure; `schemas.py`/`models.py` are a reasonable
-default that's free to become `schemas/`/`models/` folders once a project
-grows past one resource.
+is shared infrastructure; `schemas/`/`models/` are already packages, one
+file per resource, mirroring `routes/`/`tasks/`.
 
 **Request validation** is manual, unlike FastAPI's automatic wiring —
 there's no Flask equivalent of FastAPI parsing Pydantic models straight
@@ -188,12 +193,12 @@ out of the request. `routes/items.py` calls
 `ItemRead.model_validate(obj).model_dump()` (via `jsonify(...)`) on the
 way out. `ItemRead` sets `model_config = ConfigDict(from_attributes=True)`
 specifically so it can validate straight from an ORM object's attributes,
-not just a dict — so `schemas.py` stays structurally identical to the
+not just a dict — so `schemas/` stays structurally identical to the
 FastAPI template's, only the call sites differ.
 
 ## Database & ORM
 
-Picking a `database` other than `none` adds a `models.py` and a
+Picking a `database` other than `none` adds a `models/` and a
 `core/db.py`, and swaps `routes/items.py` for a database-backed version.
 The two `orm` choices produce genuinely different `core/db.py`
 implementations, not just a different import:

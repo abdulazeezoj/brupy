@@ -30,7 +30,7 @@ second style.
   `app.include_router(...)`. Don't add routes directly on `app` outside
   `main.py`'s own `/` health-check route — every resource gets its own
   router file, even a small one.
-- **Request/response models**: `src/{{ package_name }}/schemas.py` (or
+- **Request/response models**: `src/{{ package_name }}/schemas/` (or
   the ORM models themselves, for the simplest cases) — never accept or
   return a bare `dict` for a real resource; a Pydantic model is what
   gives you validation and the OpenAPI schema for free.

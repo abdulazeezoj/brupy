@@ -9,6 +9,17 @@ Versions follow `v{release}.{feature}.{fixes}` (see
 (starting at `0`), `feature` bumps for new user-facing capability,
 `fixes` bumps for patches with no new capability.
 
+## v0.22.0 — 2026-09-14
+
+### Changed
+
+- **Generated projects now use a deeper, more scalable layout for the `rest-api` and `full-stack` templates**, across both FastAPI and Flask:
+  - `src/{package_name}/models.py` and `src/{package_name}/schemas.py` are now `models/` and `schemas/` packages (`__init__.py` re-exporting `items.py`/`todos.py`, one file per resource) — previously single files that were "free to become" packages once a project grew past one resource; they now start that way.
+  - A new `src/{package_name}/scheduler.py` entrypoint is generated alongside `worker.py` whenever a background worker (Celery or Taskiq) is chosen — a separate process from the worker that only decides *when* to enqueue a task (Celery Beat / Taskiq's `TaskiqScheduler`), the worker still does the actual work.
+  - `tests/` is now split into `tests/unit/` (no I/O), `tests/e2e/` (full request flows), and, whenever a database is chosen, `tests/integration/` (persistence proven through the real database session across two independent requests) — `tests/conftest.py` stays at the tree's root, since pytest applies it to every subdirectory automatically.
+  - A new `scripts/` directory (with a `README.md`) is generated for every template, and a `scripts/seed.py` is added by every database layer — a standalone script that creates the schema and inserts a couple of example rows.
+  - `AGENTS.md`, every template's `README.md`, and the relevant `.agents/skills/` content have been updated to match.
+
 ## v0.21.3 — 2026-08-18
 
 ### Fixed

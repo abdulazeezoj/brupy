@@ -122,13 +122,13 @@ brupy/
 │           │   │   └── config/                     # rendered iff config option is true
 │           │   └── rest-api/
 │           │       ├── template.json               # options: [database, orm, migrations, worker, broker, redis]
-│           │       ├── files/                       # always rendered — main.py, core/config.py, schemas.py, routes/items.py (in-memory), env.jinja (-> .env + .env.example)
+│           │       ├── files/                       # always rendered — main.py, core/config.py, schemas/, routes/items.py (in-memory), scripts/README.md, env.jinja (-> .env + .env.example)
 │           │       ├── docker/                       # rendered iff --docker
-│           │       ├── db-sqlmodel/                   # rendered iff orm == sqlmodel; overrides routes/items.py, adds core/db.py + models.py
+│           │       ├── db-sqlmodel/                   # rendered iff orm == sqlmodel; overrides routes/items.py, adds core/db.py + models/, scripts/seed.py
 │           │       ├── db-sqlalchemy/                 # rendered iff orm == sqlalchemy; same shape, SQLAlchemy Core/ORM
 │           │       ├── migrations-sqlmodel/            # rendered iff migrations && orm == sqlmodel
 │           │       ├── migrations-sqlalchemy/          # rendered iff migrations && orm == sqlalchemy
-│           │       ├── worker-taskiq/                   # rendered iff worker == taskiq; worker.py (broker-aware) + tasks/example.py
+│           │       ├── worker-taskiq/                   # rendered iff worker == taskiq; worker.py (broker-aware) + scheduler.py + tasks/example.py
 │           │       ├── worker-celery/                   # rendered iff worker == celery; same shape, Celery, same broker-awareness
 │           │       └── redis/                            # rendered iff redis is true (requested, or implied when broker == "redis"); core/redis.py
 │           └── flask/
@@ -136,9 +136,9 @@ brupy/
 │               ├── hello-world/                    # same shape as fastapi/hello-world, on a WSGI Flask(__name__) app
 │               └── rest-api/                       # sync counterpart to fastapi/rest-api — application-factory (create_app()), Celery-only (no Taskiq: async-first, doesn't fit WSGI)
 │                   ├── template.json               # options: [database, orm, migrations, worker, broker, redis]
-│                   ├── files/                       # main.py (create_app factory), core/config.py, schemas.py, routes/items.py (in-memory), env.jinja (-> .env + .env.example)
+│                   ├── files/                       # main.py (create_app factory), core/config.py, schemas/, routes/items.py (in-memory), scripts/README.md, env.jinja (-> .env + .env.example)
 │                   ├── docker/                       # rendered iff --docker
-│                   ├── db-flask-sqlalchemy/           # rendered iff orm == flask-sqlalchemy; overrides routes/items.py, adds core/db.py + models.py
+│                   ├── db-flask-sqlalchemy/           # rendered iff orm == flask-sqlalchemy; overrides routes/items.py, adds core/db.py + models/, scripts/seed.py
 │                   ├── db-sqlalchemy/                 # rendered iff orm == sqlalchemy; same shape, manual SQLAlchemy Core/ORM
 │                   ├── migrations-flask-sqlalchemy/    # rendered iff migrations && orm == flask-sqlalchemy; Flask-Migrate (needs a Flask-SQLAlchemy db object)
 │                   ├── migrations-sqlalchemy/          # rendered iff migrations && orm == sqlalchemy; bare Alembic
@@ -452,26 +452,30 @@ Applied here:
   - `main.py` — the FastAPI entrypoint. Never renamed, never moved.
   - `worker.py` — the worker entrypoint (present only when a worker is
     chosen). Same rule.
+  - `scheduler.py` — the periodic-job entrypoint (present only when a
+    worker is chosen); a separate process from `worker.py` that only
+    decides *when* to enqueue a task, mirroring the same "one obvious
+    file" rule.
   - `routes/` — one module per HTTP resource. This is the "app/" of
     this layout: the one place with real, load-bearing significance
     (routers get individually imported and mounted in `main.py`).
   - `tasks/` — one module per background job, mirroring `routes/`.
   - `core/` — shared infrastructure every route/task might reasonably
     depend on: `config.py` (always), `db.py` (async engine/session, iff
-    a database is chosen), `redis.py` (iff redis resolves true). A
-    hypothetical future `schedules.py` (periodic job registration) would
-    live here too — the folder's job is "cross-cutting plumbing," not
-    "everything that isn't a route."
-- **A default, not a rule** — brupy picks *something* reasonable so the
-  project isn't missing a home for these, but doesn't treat it as fixed
-  the way the above is: `schemas.py` (Pydantic contracts) and
-  `models.py` (ORM models, iff a database is chosen) stay single
-  top-level files for now, because rest-api only ships one resource.
-  Both are natural candidates to become `schemas/`/`models/` folders —
-  mirroring `routes/`/`tasks/` — the moment a generated project grows a
-  second resource, but brupy doesn't make that call for the user.
+    a database is chosen), `redis.py` (iff redis resolves true) — the
+    folder's job is "cross-cutting plumbing," not "everything that
+    isn't a route."
+  - `schemas/` — Pydantic contracts, one module per resource,
+    re-exported from `__init__.py` — mirroring `routes/`/`tasks/`.
+  - `models/` — ORM models (iff a database is chosen), one module per
+    resource, re-exported from `__init__.py` — same shape as
+    `schemas/`.
+- **A default, not a rule** — `scripts/` (one-off and operational
+  scripts, e.g. seeding) is a place brupy always provides so a project
+  isn't missing an obvious home for that kind of thing, but nothing
+  requires anything to live there.
 
-Why `models.py` (and `db.py`'s session/engine setup) is **not** under
+Why `models/` (and `db.py`'s session/engine setup) is **not** under
 `core/`, despite both starting life under `db/` before this design: the
 prior FastAPI-scaffolding research (`PRODUCT_ARCH.md`'s v0.2 research
 pass, and independently `zhanymkanov/fastapi-best-practices`) draws the

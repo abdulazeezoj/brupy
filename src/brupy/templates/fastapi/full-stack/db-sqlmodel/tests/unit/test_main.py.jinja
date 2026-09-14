@@ -1,0 +1,7 @@
+from httpx import AsyncClient
+
+
+async def test_index_renders_empty_state(client: AsyncClient) -> None:
+    response = await client.get("/")
+    assert response.status_code == 200
+    assert "Nothing to do yet" in response.text

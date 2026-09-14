@@ -1,0 +1,26 @@
+"""Seed the database with a couple of example rows.
+
+Run: `uv run python scripts/seed.py`
+"""
+
+from {{ package_name }}.core.db import get_session
+from {{ package_name }}.main import create_app
+from {{ package_name }}.models import Todo
+
+
+def main() -> None:
+    app = create_app()
+    with app.app_context():
+        session = get_session()
+        session.add_all(
+            [
+                Todo(title="Buy milk"),
+                Todo(title="Walk the dog"),
+            ]
+        )
+        session.commit()
+    print("Seeded 2 todos.")
+
+
+if __name__ == "__main__":
+    main()
