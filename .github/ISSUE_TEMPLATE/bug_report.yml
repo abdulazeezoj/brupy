@@ -1,0 +1,73 @@
+name: Bug report
+description: Something in brupy itself, or in a generated project, isn't working as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much
+        detail as you can — it makes reproducing the issue much faster.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: |
+        The exact `brupy` command(s) you ran, including flags, and any
+        follow-up commands in the generated project.
+      placeholder: |
+        brupy new my-api --framework fastapi --template rest-api -o database=postgres -o orm=sqlmodel
+        cd my-api
+        uv run pytest
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Full error output, traceback, or unexpected generated file contents. This will be rendered as a code block, no need for backticks.
+      render: shell
+
+  - type: input
+    id: brupy-version
+    attributes:
+      label: brupy version
+      description: Output of `brupy --version`
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: Output of `python --version`
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: Template/framework combination, options chosen, or anything else that might be relevant.

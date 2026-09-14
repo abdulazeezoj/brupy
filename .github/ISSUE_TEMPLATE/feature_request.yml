@@ -1,0 +1,41 @@
+name: Feature request
+description: Propose a new framework, template, option, skill, or CLI behavior.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a framework, template, or skill is content-only in brupy —
+        see the [Contributing docs](https://abdulazeezoj.github.io/brupy/contributing/)
+        before proposing something that needs core code changes.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do that brupy doesn't support today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        Describe the change. If it affects the generated project layout,
+        show the new directory tree. If it's a new CLI option, show the
+        prompt/flag and its values.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any other approaches you thought about, and why you didn't go with them.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, prior art in other generators, affected templates/frameworks, etc.
