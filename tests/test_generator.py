@@ -333,7 +333,7 @@ def test_render_force_overwrites_nonempty_directory(tmp_path: Path):
 
     created = render("fastapi", "hello-world", target, make_answers(), force=True)
     assert (target / "pyproject.toml").is_file()
-    assert len(created) == 22  # 8 project files (incl. scripts/README.md) + 11 fastapi/pytest skill files + CLAUDE.md + 2 .claude/skills symlinks
+    assert len(created) == 24  # 10 project files (incl. scripts/README.md, tests/__init__.py, tests/unit/__init__.py) + 11 fastapi/pytest skill files + CLAUDE.md + 2 .claude/skills symlinks
 
 
 def test_render_disabled_template_raises(tmp_path: Path, monkeypatch):

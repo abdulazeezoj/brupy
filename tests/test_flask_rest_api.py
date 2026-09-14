@@ -165,7 +165,10 @@ class TestRestApiRender:
             "src/my_api/schemas/items.py",
             "scripts/README.md",
             "tests/unit/test_main.py",
+            "tests/__init__.py",
+            "tests/unit/__init__.py",
             "tests/e2e/test_items_flow.py",
+            "tests/e2e/__init__.py",
         }
         routes = (target / "src/my_api/routes/items.py").read_text()
         assert "_items" in routes  # the in-memory store
@@ -221,8 +224,12 @@ class TestRestApiRender:
             "scripts/seed.py",
             "tests/conftest.py",
             "tests/unit/test_main.py",
+            "tests/__init__.py",
+            "tests/unit/__init__.py",
             "tests/e2e/test_items_flow.py",
+            "tests/e2e/__init__.py",
             "tests/integration/test_items_db.py",
+            "tests/integration/__init__.py",
         }
 
         routes = (target / "src/my_api/routes/items.py").read_text()
@@ -268,8 +275,12 @@ class TestRestApiRender:
             "scripts/seed.py",
             "tests/conftest.py",
             "tests/unit/test_main.py",
+            "tests/__init__.py",
+            "tests/unit/__init__.py",
             "tests/e2e/test_items_flow.py",
+            "tests/e2e/__init__.py",
             "tests/integration/test_items_db.py",
+            "tests/integration/__init__.py",
         }
 
         db_py = (target / "src/my_api/core/db.py").read_text()
@@ -325,7 +336,10 @@ class TestRestApiRender:
             "src/my_api/scheduler.py",
             "scripts/README.md",
             "tests/unit/test_main.py",
+            "tests/__init__.py",
+            "tests/unit/__init__.py",
             "tests/e2e/test_items_flow.py",
+            "tests/e2e/__init__.py",
         }
 
         worker_py = (target / "src/my_api/worker.py").read_text()
