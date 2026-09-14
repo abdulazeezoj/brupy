@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://abdulazeezoj.github.io/brupy/
+    about: Getting started, CLI reference, and per-template docs.
