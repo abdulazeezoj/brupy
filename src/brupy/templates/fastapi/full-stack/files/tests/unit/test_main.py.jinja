@@ -1,0 +1,11 @@
+from fastapi.testclient import TestClient
+
+from {{ package_name }}.main import app
+
+client = TestClient(app)
+
+
+def test_index_renders_empty_state() -> None:
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "Nothing to do yet" in response.text

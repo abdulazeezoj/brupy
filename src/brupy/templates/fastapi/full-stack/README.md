@@ -10,7 +10,7 @@ layout as `rest-api` (PRODUCT_ARCH.md §4.4) — `main.py`/`worker.py` are
 fixed entrypoints, `routes/`/`tasks/` are "one file per resource/job"
 folders, `core/` holds shared infrastructure — but server-rendered
 instead of JSON: a `todos` resource backed by a Jinja2 `templates/` tree
-and HTMX partial swaps rather than a `schemas.py` request/response
+and HTMX partial swaps rather than a `schemas/` request/response
 contract. `pydantic-settings` config is always on. A single Todo list
 (`GET /`, `POST /todos`, `POST /todos/{id}/toggle`, `DELETE
 /todos/{id}`, each returning HTML — a full page for `/`, a fragment for
@@ -41,16 +41,20 @@ README.md                this file
 files/                    always rendered — main.py, core/config.py,
                           core/templates.py (shared Jinja2Templates instance),
                           routes/todos.py (in-memory), templates/base.html +
-                          index.html + partials/ (vanilla-styled), tests/test_main.py,
+                          index.html + partials/ (vanilla-styled), scripts/README.md,
+                          tests/unit/test_main.py, tests/e2e/test_todos_flow.py,
+                          tests/conftest.py (the in-memory _reset_todos fixture),
                           env.jinja (renders to both .env and .env.example)
 docker/                   iff --docker
 db-sqlmodel/              iff orm == sqlmodel — overrides routes/todos.py,
-                          adds core/db.py + top-level models.py
+                          adds core/db.py + models/, scripts/seed.py,
+                          tests/integration/test_todos_db.py
 db-sqlalchemy/            iff orm == sqlalchemy — same shape, SQLAlchemy Core/ORM
 migrations-sqlmodel/      iff migrations && orm == sqlmodel — async Alembic
 migrations-sqlalchemy/    iff migrations && orm == sqlalchemy
-worker-taskiq/            iff worker == taskiq — worker.py, tasks/example.py;
-                          worker.py itself branches on `broker` (redis/rabbitmq)
+worker-taskiq/            iff worker == taskiq — worker.py, scheduler.py,
+                          tasks/example.py; worker.py itself branches on
+                          `broker` (redis/rabbitmq)
 worker-celery/            iff worker == celery — same shape, Celery; same
                           broker-branching in worker.py
 redis/                    iff redis resolves true — core/redis.py client
@@ -86,6 +90,7 @@ The **generated project's** layout (what a developer actually sees) is:
   src/{package_name}/
     main.py              FastAPI entrypoint — fixed name/location, mounts /static
     worker.py            {worker} entrypoint — fixed name/location (iff a worker is chosen)
+    scheduler.py          {worker} scheduler entrypoint (iff a worker is chosen)
     routes/               one module per HTTP resource — returns HTML, not JSON
     templates/             Jinja2 templates: base.html, index.html, partials/
     static/css/            served at /static — style.css (iff css == vanilla),
@@ -93,15 +98,17 @@ The **generated project's** layout (what a developer actually sees) is:
                             output, iff css == tailwind)
     tasks/                 one module per background job (iff a worker is chosen)
     core/                   shared infrastructure: config.py, templates.py, db.py, redis.py
-    models.py                {orm} models — iff a database is chosen
+    models/                  {orm} models, one file per resource — iff a database is chosen
+scripts/                 one-off/operational scripts — always present, plus
+                          seed.py iff a database is chosen
 ```
 
-No `schemas.py`: unlike `rest-api`, there's no separate request/response
+No `schemas/`: unlike `rest-api`, there's no separate request/response
 contract to declare — the in-memory layer's `Todo` is a plain
 `@dataclass` defined right in `routes/todos.py` (nothing else uses it),
-and the DB-backed layers use their `models.py` `Todo` directly as the
-template context object. Adding one back is a reasonable next step if a
-future resource needs input validation beyond "a required `title`
+and the DB-backed layers use their `models/example.py` `Todo` directly as
+the template context object. Adding one back is a reasonable next step
+if a future resource needs input validation beyond "a required `title`
 field," but it would be dead weight for what this template ships today.
 
 ## Two gotchas specific to this template — don't regress them
@@ -109,7 +116,7 @@ field," but it would be dead weight for what this template ships today.
 See `rest-api`'s `README.md` for the four gotchas it shares with this
 template (the `__init__.py.jinja` requirement, `alembic.ini`'s
 `prepend_sys_path`, `worker.py`'s bottom-of-file task imports, and the
-`db-*` layers' `core/db.py` + top-level `models.py` split — all apply
+`db-*` layers' `core/db.py` + `models/` package split — all apply
 here unchanged). Specific to `full-stack`:
 
 1. **Template files under `files/src/{package_name}/templates/` and

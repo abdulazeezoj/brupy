@@ -63,6 +63,7 @@ StaticFiles(...))`; this template needs neither.
   src/{package_name}/
     main.py              Flask entrypoint — create_app() factory, no module-level app
     worker.py            Celery entrypoint (iff worker == celery)
+    scheduler.py          Celery Beat entrypoint (iff worker == celery)
     routes/               one module per HTTP resource — Flask Blueprints
       todos.py              returns HTML/fragments, not JSON
     templates/             Jinja2 templates — found automatically, no setup needed
@@ -81,18 +82,23 @@ StaticFiles(...))`; this template needs neither.
       redis.py                Redis client (iff redis resolves true)
     tasks/                 one module per background job (iff worker == celery)
       example.py             the /tasks/add demo task
-    models.py               {orm} models (iff database != none)
+    models/                  {orm} models, one file per resource (iff database != none)
+      todos.py
   migrations/ or alembic/  iff migrations — directory name depends on orm, see rest-api's docs
+  scripts/                 one-off/operational scripts — always present, plus seed.py (iff database != none)
   tests/
+    unit/                   no I/O
+    e2e/                     full request flows
+    integration/              persistence through the real database session (iff database != none)
   AGENTS.md
   Dockerfile                iff --docker
 ```
 
-No `schemas.py`: unlike `rest-api`, there's no request/response contract
+No `schemas/`: unlike `rest-api`, there's no request/response contract
 to validate manually via `.model_validate()`/`.model_dump()`. The
 in-memory layer's `Todo` is a plain `@dataclass` defined right in
-`routes/todos.py`; the DB-backed layers pass their `models.py` `Todo`
-straight into `render_template(...)` as the context object.
+`routes/todos.py`; the DB-backed layers pass their `models/example.py`
+`Todo` straight into `render_template(...)` as the context object.
 
 ## Why `templates/` and `static/` files have no `.jinja` suffix
 

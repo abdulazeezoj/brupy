@@ -72,4 +72,4 @@ Both routes return the *same* `outerHTML`-swappable `<li>` shape `toggle_todo`/`
 
 ## 4. Test it
 
-Add a test that gets the edit form (`GET /todos/{id}/edit`, asserts the `<input>` is present) and one that submits it (`POST /todos/{id}/edit`, asserts the new title appears and the input doesn't) — see the `pytest` skill for this project's fixture conventions, and `tests/test_main.py` for the existing toggle/delete tests to mirror.
+Add a test that gets the edit form (`GET /todos/{id}/edit`, asserts the `<input>` is present) and one that submits it (`POST /todos/{id}/edit`, asserts the new title appears and the input doesn't) — see the `pytest` skill for this project's fixture conventions, and `tests/e2e/test_todos_flow.py` for the existing toggle/delete tests to mirror.

@@ -10,7 +10,7 @@ resource.
 
 ## 1. Define the table model
 
-In `src/{{ package_name }}/models.py`, add a class next to `Item`,
+In `src/{{ package_name }}/models/`, add a class next to `Item`,
 mirroring its shape:
 
 ```python
@@ -31,7 +31,7 @@ class Widget(SQLModel, table=True):
 
 ## 2. Define the API schemas (separate types, on purpose)
 
-In `src/{{ package_name }}/schemas.py`, add plain Pydantic models for what
+In `src/{{ package_name }}/schemas/`, add plain Pydantic models for what
 crosses the HTTP boundary — *not* the `Widget` class itself:
 
 ```python
@@ -109,7 +109,7 @@ Every call above that touches the database is awaited — see
 
 This project has `migrations=true` — the table doesn't exist until a
 migration creates it. `Widget` is visible to Alembic's autogenerate as
-soon as it's importable from `models.py` (it already is, since you added
+soon as it's importable from `models/` (it already is, since you added
 it there in step 1). Generate and review the migration, then apply it —
 see the `alembic` skill's `guides/first-migration.md` for the actual
 `alembic revision --autogenerate` / `alembic upgrade head` workflow;

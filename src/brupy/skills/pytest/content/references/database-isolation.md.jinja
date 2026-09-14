@@ -11,8 +11,8 @@ with; the test database is always SQLite-in-memory, chosen for tests
 specifically because it needs no external process.
 {% else %}
 This template has no database configured (`database: none`), so there
-is nothing to isolate yet — `tests/test_main.py` talks straight to the
-app's in-memory Python data structures, which start fresh every time
+is nothing to isolate yet — every test under `tests/` talks straight to
+the app's in-memory Python data structures, which start fresh every time
 the process starts. The rest of this file describes the pattern the
 `rest-api` template uses once a database *is* configured — read it as
 what to reach for if you add one, not as something this template

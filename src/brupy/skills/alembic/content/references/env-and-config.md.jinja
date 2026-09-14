@@ -44,9 +44,9 @@ config.set_main_option("sqlalchemy.url", settings.database_url)
   registers the model's table on
   {{ "`SQLModel.metadata`" if orm == "sqlmodel" else "`Base.metadata`" }}.
   If you add a new model in a module `env.py` doesn't import (directly
-  or transitively through `models.py`), autogenerate silently won't see
+  or transitively through `models/`), autogenerate silently won't see
   it — it can only diff tables it knows about. Keep every model reachable
-  from `src/{{ package_name }}/models.py` so this one import continues to
+  from `src/{{ package_name }}/models/` so this one import continues to
   cover all of them.
 - `settings.database_url` is the same setting the running app itself
   uses (`core/config.py`) — migrations always target whatever database

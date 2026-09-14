@@ -8,8 +8,8 @@ project (that's `files/README.md.jinja`).
 A layered FastAPI REST API with an opinionated, Next.js-inspired
 layout (PRODUCT_ARCH.md §4.4): `main.py`/`worker.py` are fixed
 entrypoints, `routes/`/`tasks/` are "one file per resource/job" folders,
-`core/` holds shared infrastructure — everything else (`schemas.py`,
-`models.py`) is a reasonable default, not an enforced convention.
+`core/` holds shared infrastructure — `schemas/`/`models/` are already
+packages, one file per resource, mirroring `routes/`/`tasks/`.
 `pydantic-settings` config is always on (unlike `hello-world`, where
 it's optional) — this template exists to demonstrate the shape past
 "hello world." A single `items` resource (`GET/POST /items/`,
@@ -32,17 +32,20 @@ real database if one is chosen.
 ```
 template.json            options + layers (see below)
 README.md                this file
-files/                    always rendered — main.py, core/config.py, schemas.py,
-                          routes/items.py (in-memory), tests/test_main.py,
+files/                    always rendered — main.py, core/config.py, schemas/,
+                          routes/items.py (in-memory), scripts/README.md,
+                          tests/unit/test_main.py, tests/e2e/test_items_flow.py,
                           env.jinja (renders to both .env and .env.example)
 docker/                   iff --docker
 db-sqlmodel/              iff orm == sqlmodel — overrides routes/items.py,
-                          adds core/db.py + top-level models.py
+                          adds core/db.py + models/, scripts/seed.py,
+                          tests/integration/test_items_db.py
 db-sqlalchemy/            iff orm == sqlalchemy — same shape, SQLAlchemy Core/ORM
 migrations-sqlmodel/      iff migrations && orm == sqlmodel — async Alembic
 migrations-sqlalchemy/    iff migrations && orm == sqlalchemy
-worker-taskiq/            iff worker == taskiq — worker.py, tasks/example.py;
-                          worker.py itself branches on `broker` (redis/rabbitmq)
+worker-taskiq/            iff worker == taskiq — worker.py, scheduler.py,
+                          tasks/example.py; worker.py itself branches on
+                          `broker` (redis/rabbitmq)
 worker-celery/            iff worker == celery — same shape, Celery; same
                           broker-branching in worker.py
 redis/                    iff redis resolves true — core/redis.py client
@@ -61,11 +64,14 @@ The **generated project's** layout (what a developer actually sees) is:
 src/{{package_name}}/
   main.py              FastAPI entrypoint — fixed name/location
   worker.py            {worker} entrypoint — fixed name/location (iff a worker is chosen)
+  scheduler.py          {worker} scheduler entrypoint (iff a worker is chosen)
   routes/               one module per HTTP resource
   tasks/                 one module per background job (iff a worker is chosen)
   core/                   shared infrastructure: config.py, db.py, redis.py
-  schemas.py             Pydantic contracts — a plain default, not enforced
-  models.py                {orm} models — same, iff a database is chosen
+  schemas/                Pydantic contracts, one file per resource
+  models/                  {orm} models, one file per resource — iff a database is chosen
+scripts/                one-off/operational scripts — always present, plus
+                          seed.py iff a database is chosen
 ```
 
 `main.py` (in `files/`) is a deliberate exception to "layers own whole
@@ -95,7 +101,7 @@ version, since it's easy to "fix" these back in accidentally:
    its own. A bare `tasks/__init__.py` doesn't help either — importing
    a package doesn't auto-import its submodules; each `tasks/*.py`
    module needs its own explicit import line in `worker.py`.
-4. **`db-*` layers write `core/db.py` and top-level `models.py`, not a
+4. **`db-*` layers write `core/db.py` and a `models/` package, not a
    `db/` package** — keeps model definitions out of `core/` (they're
    domain content, not infrastructure) while still giving the session/
    engine setup a fixed, predictable home alongside `config.py`/
@@ -135,8 +141,7 @@ option's `when` can only reference **earlier** options' resolved values
 
 Following the opinionated layout: a new `POST /widgets` resource is a
 new `routes/widgets.py` (+ one `app.include_router(...)` line in
-`main.py`), a new `models.py`/`schemas.py` addition (or split into
-`models/widgets.py`/`schemas/widgets.py` once there's enough of them to
-warrant folders — not enforced, see gotcha #4's reasoning), and — if it
-needs background work — a new `tasks/widgets.py` (+ one import line in
-`worker.py`).
+`main.py`), a new `models/widgets.py`/`schemas/widgets.py` (each
+re-exported from that package's `__init__.py`, see gotcha #4's
+reasoning), and — if it needs background work — a new
+`tasks/widgets.py` (+ one import line in `worker.py`).

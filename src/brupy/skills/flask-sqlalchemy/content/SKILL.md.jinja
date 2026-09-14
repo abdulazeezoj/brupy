@@ -18,7 +18,7 @@ session semantics that apply to SQLAlchemy generally, see the
 
 - Touching `src/{{ package_name }}/core/db.py` — the `db`/`migrate`
   objects, `init_db()`, engine options.
-- Defining or changing a model in `src/{{ package_name }}/models.py`.
+- Defining or changing a model in `src/{{ package_name }}/models/`.
 - Debugging `RuntimeError: Working outside of application context` (or
   of request context) coming from a `db.session` call.
 {% if migrations %}
@@ -51,7 +51,7 @@ session semantics that apply to SQLAlchemy generally, see the
   skill; the `flask db migrate`/`flask db upgrade` workflow itself is
   the `flask-migrate` skill's territory.
 {% endif %}
-- **Models**: `src/{{ package_name }}/models.py` — subclass `db.Model`,
+- **Models**: `src/{{ package_name }}/models/` — subclass `db.Model`,
   declare columns with `Mapped[...]` type hints and `mapped_column(...)`
   (SQLAlchemy 2.0 style), e.g. `Item`'s
   `id: Mapped[int] = mapped_column(primary_key=True)`. `db.Model`

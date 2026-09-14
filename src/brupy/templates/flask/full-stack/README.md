@@ -10,7 +10,7 @@ as `rest-api` (PRODUCT_ARCH.md §4.4) — `main.py`/`worker.py` are fixed
 entrypoints, `routes/`/`tasks/` are "one file per resource/job" folders,
 `core/` holds shared infrastructure — but server-rendered instead of
 JSON: a `todos` resource backed by a Jinja2 `templates/` tree and HTMX
-partial swaps rather than a `schemas.py` request/response contract.
+partial swaps rather than a `schemas/` request/response contract.
 `pydantic-settings` config is always on. A single Todo list (`GET /`,
 `POST /todos`, `POST /todos/<id>/toggle`, `DELETE /todos/<id>`, each
 returning HTML or plain text — a full page for `/`, a fragment for
@@ -44,16 +44,20 @@ template.json            options + layers (see below) — same shape as rest-api
 README.md                this file
 files/                    always rendered — main.py, core/config.py,
                           routes/todos.py (in-memory), templates/base.html +
-                          index.html + partials/ (vanilla-styled), tests/test_main.py,
+                          index.html + partials/ (vanilla-styled), scripts/README.md,
+                          tests/unit/test_main.py, tests/e2e/test_todos_flow.py,
+                          tests/conftest.py (the in-memory _reset_todos fixture),
                           env.jinja (renders to both .env and .env.example)
 docker/                   iff --docker
 db-flask-sqlalchemy/     iff orm == flask-sqlalchemy — overrides routes/todos.py,
-                          adds core/db.py + top-level models.py
+                          adds core/db.py + models/, scripts/seed.py,
+                          tests/integration/test_todos_db.py
 db-sqlalchemy/            iff orm == sqlalchemy — same shape, manual SQLAlchemy
 migrations-flask-sqlalchemy/  iff migrations && orm == flask-sqlalchemy — Flask-Migrate
 migrations-sqlalchemy/    iff migrations && orm == sqlalchemy — Alembic
-worker-celery/            iff worker == celery — worker.py, tasks/example.py;
-                          worker.py itself branches on `broker` (redis/rabbitmq)
+worker-celery/            iff worker == celery — worker.py, scheduler.py,
+                          tasks/example.py; worker.py itself branches on
+                          `broker` (redis/rabbitmq)
 redis/                    iff redis resolves true — core/redis.py client
 css-vanilla/              iff css == vanilla (the default) — static/css/style.css,
                           the hand-written CSS `files/`'s templates are styled for
@@ -87,20 +91,23 @@ The **generated project's** layout (what a developer actually sees) is:
   src/{package_name}/
     main.py              Flask entrypoint — create_app(), fixed name/location
     worker.py            {worker} entrypoint — fixed name/location (iff a worker is chosen)
+    scheduler.py          {worker} scheduler entrypoint (iff a worker is chosen)
     routes/               one module per HTTP resource — returns HTML/text, not JSON
     templates/             Jinja2 templates: base.html, index.html, partials/
     static/css/            served at /static — style.css (iff css == vanilla),
                             or input.css (tracked) + style.css (git-ignored build
                             output, iff css == tailwind)
     core/                   shared infrastructure: config.py, db.py, redis.py
-    models.py                {orm} models — iff a database is chosen
+    models/                  {orm} models, one file per resource — iff a database is chosen
+scripts/                 one-off/operational scripts — always present, plus
+                          seed.py iff a database is chosen
 ```
 
-No `schemas.py`: unlike `rest-api`, there's no separate request/response
+No `schemas/`: unlike `rest-api`, there's no separate request/response
 contract to declare — the in-memory layer's `Todo` is a plain
 `@dataclass` defined right in `routes/todos.py` (nothing else uses it),
-and the DB-backed layers use their `models.py` `Todo` directly as the
-template context object.
+and the DB-backed layers use their `models/example.py` `Todo` directly as
+the template context object.
 
 Also no `core/templates.py` (fastapi/full-stack has one): Flask's
 `render_template()` works as a bare module-level function using the

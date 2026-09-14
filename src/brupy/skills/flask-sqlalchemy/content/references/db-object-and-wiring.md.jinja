@@ -17,7 +17,7 @@ db = SQLAlchemy()
 
 `db = SQLAlchemy()` at import time does **no I/O** — it just builds an
 unconfigured extension instance. This is what makes it safe to import
-`db` from anywhere (`models.py` does, to subclass `db.Model`) without
+`db` from anywhere (`models/` does, to subclass `db.Model`) without
 accidentally requiring a live database connection just to import a
 module. It's the same reason `create_app()` is a factory function
 instead of a module-level `app = Flask(__name__)`: see the `flask`
@@ -79,7 +79,7 @@ covers the object wiring that makes those commands available.
 
 ## `db.Model` vs. a bare `DeclarativeBase`
 
-`models.py` subclasses `db.Model`, not a plain SQLAlchemy
+`models/` subclasses `db.Model`, not a plain SQLAlchemy
 `DeclarativeBase`:
 
 ```python

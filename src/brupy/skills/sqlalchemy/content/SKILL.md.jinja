@@ -24,7 +24,7 @@ second style.
 
 ## When to reach for this
 
-- Adding, changing, or removing a model in `src/{{ package_name }}/models.py`.
+- Adding, changing, or removing a model in `src/{{ package_name }}/models/`.
 - Writing a new query in a route handler.
 - Touching `src/{{ package_name }}/core/db.py` — engine, session
   {% if framework == "fastapi" %}factory, or the `get_session` dependency{% else %}factory, or `get_session()`{% endif %}.
@@ -38,7 +38,7 @@ second style.
 
 ## Quick reference
 
-- **Models**: `src/{{ package_name }}/models.py`. SQLAlchemy 2.0
+- **Models**: `src/{{ package_name }}/models/`. SQLAlchemy 2.0
   declarative style — `class Base(DeclarativeBase): pass`, then each
   model declares columns with `Mapped[...]` type annotations and
   `mapped_column(...)`, not the legacy `Column(...)` + `declarative_base()`

@@ -9,7 +9,7 @@ uv run alembic upgrade head
 ```
 
 The first run captures the initial schema straight from
-`src/{{ package_name }}/models.py` (the `Item` model, plus anything else
+`src/{{ package_name }}/models/` (the `Item` model, plus anything else
 you've added there) and applies it — after this, the database has both
 the tables *and* a migration history that starts from a real revision,
 not from tables that happen to already exist (see

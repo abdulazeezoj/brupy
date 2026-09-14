@@ -62,7 +62,7 @@ Overflow answers, and LLM training data overwhelmingly show `.execute()`
 This project has `migrations=true`. Alembic's `env.py` sets
 `target_metadata = SQLModel.metadata`, but that metadata object only
 knows about tables whose model class has been imported *somewhere* in the
-process — `env.py` imports `models.py` explicitly for exactly this
+process — `env.py` imports `models/` explicitly for exactly this
 reason:
 
 ```python
@@ -73,7 +73,7 @@ If you add a new model in a different module and it never gets imported
 (directly or transitively) before `alembic revision --autogenerate` runs,
 autogenerate won't see it and won't generate a migration for it — not an
 error, just a quietly incomplete migration. Keep new models importable
-from `models.py` (or make sure `env.py`'s import list picks up wherever
+from `models/` (or make sure `env.py`'s import list picks up wherever
 you put them). The migration workflow itself (generating, reviewing, and
 running revisions) is covered in the `alembic` skill — this is only the
 model-visibility half of that story.

@@ -14,7 +14,7 @@ Split behaviors into separate test functions rather than one function
 that asserts an entire flow end-to-end: `test_create_widget`,
 `test_list_widgets`, `test_get_widget`,
 `test_get_widget_missing_returns_404`, `test_delete_widget`. The
-starter `test_item_crud` in `tests/test_main.py` chains
+starter `test_item_crud` in `tests/e2e/test_items_flow.py` chains
 create → list → get → delete → get-again-expecting-404 into one
 function to keep the initial scaffold short — read it as a compact
 example of the behaviors worth covering, not as the shape to keep
@@ -71,7 +71,7 @@ def test_get_widget_missing_returns_404(client) -> None:
 For any CRUD resource: create (2xx, body echoes the input), list (2xx,
 the new item is present), get-by-id (2xx, the right item comes back),
 get-by-id when missing (404), delete (2xx/204), and get-by-id again
-after delete (404). `tests/test_main.py`'s `test_item_crud` covers
+after delete (404). `tests/e2e/test_items_flow.py`'s `test_item_crud` covers
 exactly this set for `items` in one combined function; give a new
 resource the same coverage, split per the section above once there's
 more than the basics worth testing.

@@ -19,7 +19,7 @@ wrapper layer; see the `alembic` skill for what's happening underneath
 ## When to reach for this
 
 - Generating a migration after adding or changing a model in
-  `src/{{ package_name }}/models.py`.
+  `src/{{ package_name }}/models/`.
 - Applying or rolling back migrations, in dev or before deploying.
 - Debugging `flask db migrate` reporting "No changes in schema
   detected" when you know the models changed.

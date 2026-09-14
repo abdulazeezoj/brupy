@@ -7,7 +7,7 @@ description: Generating, reviewing, and applying database migrations with Alembi
 
 This project's schema is versioned with Alembic. The
 {{ "SQLModel" if orm == "sqlmodel" else "SQLAlchemy" }} models in
-`src/{{ package_name }}/models.py` are the source of truth, and every
+`src/{{ package_name }}/models/` are the source of truth, and every
 schema change is captured as a migration file under `alembic/versions/`
 before it's applied to any database. This skill covers how *this
 project's* Alembic setup works — its `env.py` is generated, not the
@@ -25,7 +25,7 @@ gotchas (below) that are easy to hit and non-obvious to diagnose.
 
 ## When to reach for this
 
-- You changed a model in `src/{{ package_name }}/models.py` (added a
+- You changed a model in `src/{{ package_name }}/models/` (added a
   table, a column, an index, a constraint) and need a migration for it.
 - You're setting up the database for the first time on a fresh checkout
   or a fresh environment (see `guides/first-migration.md`).
@@ -42,7 +42,7 @@ gotchas (below) that are easy to hit and non-obvious to diagnose.
   wired to this project already — it imports `settings.database_url` and
   the model metadata
   ({{ "`SQLModel.metadata`" if orm == "sqlmodel" else "`Base.metadata`" }})
-  from `src/{{ package_name }}/models.py`, so autogenerate can see both
+  from `src/{{ package_name }}/models/`, so autogenerate can see both
   the target database and the target schema without extra setup.
 - **Generate a migration**: `uv run alembic revision --autogenerate -m
   "describe your change"` — diffs the models against the last-known

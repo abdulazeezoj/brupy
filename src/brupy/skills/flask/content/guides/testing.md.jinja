@@ -57,7 +57,7 @@ nothing test-specific needed here beyond the isolated URL.
 
 ## Adding a test for a new endpoint
 
-Mirror `tests/test_main.py`: a `def test_...(client)` function using
+Mirror `tests/unit/test_main.py`: a `def test_...(client)` function using
 the `client` fixture, asserting on `response.status_code` and
 `response.get_json()`. One test per behavior (create, list, get-by-id,
 404-when-missing, delete) rather than one large test asserting
@@ -82,7 +82,7 @@ module-level `app` in `main.py` — requests go directly into the app
 in-process, no socket, no `flask run` running in the background:
 
 ```python
-# tests/test_main.py
+# tests/unit/test_main.py
 from {{ package_name }}.main import app
 
 
@@ -104,7 +104,7 @@ importing the one real one.
 
 ## Adding a test for a new route
 
-Mirror `tests/test_main.py`: a `def test_...()` function that builds
+Mirror `tests/unit/test_main.py`: a `def test_...()` function that builds
 its own `client = app.test_client()` and asserts on
 `response.status_code`/`response.json`.
 {% endif %}

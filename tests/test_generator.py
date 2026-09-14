@@ -130,7 +130,7 @@ def test_render_creates_expected_files(tmp_path: Path):
         Path(".gitignore"),
         Path("src/my_api/__init__.py"),
         Path("src/my_api/main.py"),
-        Path("tests/test_main.py"),
+        Path("tests/unit/test_main.py"),
     }
     assert expected <= set(created)
     for rel_path in expected:
@@ -280,7 +280,7 @@ def test_render_substitutes_package_name(tmp_path: Path):
     main_py = (target / "src/my_api/main.py").read_text()
     assert 'FastAPI(title="My Api")' in main_py
 
-    test_py = (target / "tests/test_main.py").read_text()
+    test_py = (target / "tests/unit/test_main.py").read_text()
     assert "from my_api.main import app" in test_py
 
     readme = (target / "README.md").read_text()
@@ -333,7 +333,7 @@ def test_render_force_overwrites_nonempty_directory(tmp_path: Path):
 
     created = render("fastapi", "hello-world", target, make_answers(), force=True)
     assert (target / "pyproject.toml").is_file()
-    assert len(created) == 21  # 7 project files + 11 fastapi/pytest skill files + CLAUDE.md + 2 .claude/skills symlinks
+    assert len(created) == 24  # 10 project files (incl. scripts/README.md, tests/__init__.py, tests/unit/__init__.py) + 11 fastapi/pytest skill files + CLAUDE.md + 2 .claude/skills symlinks
 
 
 def test_render_disabled_template_raises(tmp_path: Path, monkeypatch):
@@ -496,7 +496,8 @@ def test_rest_api_sqlite_sqlmodel_with_migrations(tmp_path: Path):
     created = render("fastapi", "rest-api", target, answers)
 
     assert Path("src/my_api/core/db.py") in created
-    assert Path("src/my_api/models.py") in created
+    assert Path("src/my_api/models/__init__.py") in created
+    assert Path("src/my_api/models/example.py") in created
     assert Path("alembic.ini") in created
     assert Path("alembic/env.py") in created
     assert Path("alembic/script.py.mako") in created
@@ -595,9 +596,11 @@ def test_rest_api_all_features_combined(tmp_path: Path):
 
     for expected in [
         "src/my_api/core/db.py",
-        "src/my_api/models.py",
+        "src/my_api/models/__init__.py",
+        "src/my_api/models/example.py",
         "alembic.ini",
         "src/my_api/worker.py",
+        "src/my_api/scheduler.py",
         "src/my_api/tasks/example.py",
         "src/my_api/core/redis.py",
     ]:
@@ -774,13 +777,14 @@ def test_full_stack_sqlite_sqlmodel_with_migrations(tmp_path: Path):
     created = render("fastapi", "full-stack", target, answers)
 
     assert Path("src/my_api/core/db.py") in created
-    assert Path("src/my_api/models.py") in created
+    assert Path("src/my_api/models/__init__.py") in created
+    assert Path("src/my_api/models/example.py") in created
     assert Path("alembic.ini") in created
     assert Path("alembic/env.py") in created
 
     routes = (target / "src/my_api/routes/todos.py").read_text()
     assert "get_session" in routes
-    models_py = (target / "src/my_api/models.py").read_text()
+    models_py = (target / "src/my_api/models/example.py").read_text()
     assert "class Todo" in models_py
 
     env_py = (target / "alembic/env.py").read_text()
@@ -800,7 +804,7 @@ def test_full_stack_postgres_sqlalchemy_no_migrations(tmp_path: Path):
     assert Path("src/my_api/core/db.py") in created
     assert Path("alembic.ini") not in created
 
-    models_py = (target / "src/my_api/models.py").read_text()
+    models_py = (target / "src/my_api/models/example.py").read_text()
     assert "class Todo(Base)" in models_py
     env_file = (target / ".env").read_text()
     assert "postgresql+asyncpg://" in env_file
@@ -858,9 +862,11 @@ def test_full_stack_all_features_combined(tmp_path: Path):
 
     for expected in [
         "src/my_api/core/db.py",
-        "src/my_api/models.py",
+        "src/my_api/models/__init__.py",
+        "src/my_api/models/example.py",
         "alembic.ini",
         "src/my_api/worker.py",
+        "src/my_api/scheduler.py",
         "src/my_api/tasks/example.py",
         "src/my_api/core/redis.py",
         "src/my_api/templates/index.html",

@@ -1,0 +1,14 @@
+"""Taskiq scheduler — run as a separate process from the worker
+(`worker.py`); it only decides *when* to enqueue a task, the worker still
+does the actual work. Reads schedules off any task's `schedule=` label
+(see `tasks/example.py`).
+
+Run: `uv run taskiq scheduler {{ package_name }}.scheduler:scheduler --app-dir src`
+"""
+
+from taskiq.schedule_sources import LabelScheduleSource
+from taskiq.scheduler import TaskiqScheduler
+
+from {{ package_name }}.worker import broker
+
+scheduler = TaskiqScheduler(broker=broker, sources=[LabelScheduleSource(broker)])

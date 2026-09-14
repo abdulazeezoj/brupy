@@ -13,7 +13,7 @@ introducing a second style.
 
 SQLModel is the default ORM for `fastapi`/`rest-api` (the other choice is
 plain SQLAlchemy — see the `sqlalchemy` skill if that's what this project
-uses instead; check `src/{{ package_name }}/models.py` for `SQLModel` vs.
+uses instead; check `src/{{ package_name }}/models/` for `SQLModel` vs.
 `declarative_base()` if you're unsure which applies). It is async-only in
 this project — Flask's sync data layer uses plain SQLAlchemy or
 flask-sqlalchemy instead.
@@ -29,7 +29,7 @@ flask-sqlalchemy instead.
 
 ## Quick reference
 
-- **Models**: `src/{{ package_name }}/models.py`. One class per table,
+- **Models**: `src/{{ package_name }}/models/`. One class per table,
   inheriting `SQLModel` with `table=True` — this single class *is* both
   the Pydantic model and the SQLAlchemy table declaration:
 
@@ -59,8 +59,8 @@ flask-sqlalchemy instead.
   sync fallback in this project's data layer — a call missing `await`
   doesn't error immediately, it hands back a coroutine object (see
   `references/gotchas.md`).
-- **Table model vs. API schema**: the SQLModel class in `models.py` is the
-  *table* model. `src/{{ package_name }}/schemas.py` holds separate plain
+- **Table model vs. API schema**: the SQLModel class in `models/` is the
+  *table* model. `src/{{ package_name }}/schemas/` holds separate plain
   Pydantic models (`ItemCreate`, `ItemRead`) for what crosses the HTTP
   boundary — see `references/models-and-sessions.md` for why these aren't
   collapsed into one type even though SQLModel supports `table=False`
@@ -68,7 +68,7 @@ flask-sqlalchemy instead.
 {% if migrations %}
 - **Migrations**: this project has `migrations=true` — Alembic's
   `env.py` points `target_metadata` at `SQLModel.metadata` and imports
-  `models.py` so Alembic can see the tables when autogenerating. The
+  `models/` so Alembic can see the tables when autogenerating. The
   `alembic` skill covers the migration workflow itself; this skill only
   covers the model-definition side that autogenerate reads from.
 {% endif %}

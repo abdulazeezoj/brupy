@@ -6,7 +6,7 @@ new resource rather than inventing a new one.
 
 ## 1. Define the schemas
 
-In `src/{{ package_name }}/schemas.py`, add the request/response models:
+In `src/{{ package_name }}/schemas/`, add the request/response models:
 
 ```python
 class WidgetCreate(BaseModel):
@@ -28,7 +28,7 @@ class WidgetRead(BaseModel):
 {% if database != "none" %}
 ## 2. Define the model
 
-In `src/{{ package_name }}/models.py`, add the ORM model (mirror the
+In `src/{{ package_name }}/models/`, add the ORM model (mirror the
 existing `Item` model's shape — same `{{ orm }}` conventions, see the
 `{{ orm }}` skill for the model-definition patterns this project uses).
 
@@ -84,14 +84,15 @@ app.include_router(widgets_router)
 {% if database != "none" %}
 ## 5. Test it
 
-Add `tests/test_widgets.py`, mirroring `tests/test_main.py`'s fixture
-usage (see `guides/testing.md`) — every new resource gets its own
-CRUD-cycle test (create, list, get, delete, and the 404 case), not just
-a smoke test of one happy path.
+Add `tests/e2e/test_widgets_flow.py`, mirroring
+`tests/unit/test_main.py`'s fixture usage (see `guides/testing.md`) —
+every new resource gets its own CRUD-cycle test (create, list, get,
+delete, and the 404 case), not just a smoke test of one happy path.
 {% else %}
 ## 4. Test it
 
-Add `tests/test_widgets.py`, mirroring `tests/test_main.py` — every new
-resource gets its own CRUD-cycle test (create, list, get, delete, and
-the 404 case), not just a smoke test of one happy path.
+Add `tests/e2e/test_widgets_flow.py`, mirroring
+`tests/unit/test_main.py` — every new resource gets its own CRUD-cycle
+test (create, list, get, delete, and the 404 case), not just a smoke
+test of one happy path.
 {% endif %}

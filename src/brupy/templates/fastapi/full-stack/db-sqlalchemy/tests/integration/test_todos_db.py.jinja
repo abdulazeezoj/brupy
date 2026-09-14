@@ -1,0 +1,11 @@
+from httpx import AsyncClient
+
+
+async def test_todo_persists_across_requests(client: AsyncClient) -> None:
+    create_response = await client.post("/todos", data={"title": "Buy milk"})
+    assert create_response.status_code == 200
+
+    # A second, independent request re-renders the index — proves the
+    # todo is backed by persistence, not e.g. per-request state.
+    index_response = await client.get("/")
+    assert "Buy milk" in index_response.text

@@ -1,7 +1,7 @@
 # Guide: the first migration
 
 Run this once before starting the app for the first time — it generates
-the initial migration from the models in `src/{{ package_name }}/models.py`
+the initial migration from the models in `src/{{ package_name }}/models/`
 and applies it, creating the schema:
 
 ```
@@ -41,7 +41,7 @@ say they should.
 ## Repeat both commands on every model change
 
 Whenever you add, remove, or change a field on a model in
-`src/{{ package_name }}/models.py`:
+`src/{{ package_name }}/models/`:
 
 ```
 uv run flask --app src/{{ package_name }}/main.py db migrate -m "describe your change"

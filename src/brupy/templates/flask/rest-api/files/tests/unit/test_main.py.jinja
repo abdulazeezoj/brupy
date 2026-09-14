@@ -1,0 +1,10 @@
+from {{ package_name }}.main import create_app
+
+app = create_app(testing=True)
+client = app.test_client()
+
+
+def test_read_root() -> None:
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.get_json() == {"message": "Hello, World!"}

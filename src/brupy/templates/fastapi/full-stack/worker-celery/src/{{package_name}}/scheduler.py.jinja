@@ -1,0 +1,19 @@
+"""Celery Beat schedule — run as a separate process from the worker
+(`worker.py`); it only decides *when* to enqueue a task, the worker still
+does the actual work.
+
+Run: `PYTHONPATH=src uv run celery -A {{ package_name }}.scheduler:celery_app beat --loglevel=info`
+"""
+
+from celery.schedules import crontab
+
+from {{ package_name }}.tasks.example import add
+from {{ package_name }}.worker import celery_app
+
+celery_app.conf.beat_schedule = {
+    "add-every-minute": {
+        "task": add.name,
+        "schedule": crontab(minute="*"),
+        "args": (1, 1),
+    },
+}

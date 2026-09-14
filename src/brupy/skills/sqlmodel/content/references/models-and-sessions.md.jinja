@@ -4,7 +4,7 @@
 
 `SQLModel` subclasses do double duty: with `table=True`, the class is
 *simultaneously* a Pydantic model (validation, `.model_dump()`, etc.) and
-a SQLAlchemy-mapped table. `src/{{ package_name }}/models.py`:
+a SQLAlchemy-mapped table. `src/{{ package_name }}/models/`:
 
 ```python
 from sqlmodel import Field, SQLModel
@@ -112,10 +112,10 @@ await session.commit()
 
 ## Why table models and API schemas stay separate types
 
-`src/{{ package_name }}/schemas.py` defines `ItemCreate`/`ItemRead` as
+`src/{{ package_name }}/schemas/` defines `ItemCreate`/`ItemRead` as
 *plain* `pydantic.BaseModel` subclasses, deliberately not SQLModel
 `table=False` models and deliberately not the same class as `Item` in
-`models.py`, even though SQLModel is explicitly designed to let a single
+`models/`, even though SQLModel is explicitly designed to let a single
 model wear all three hats. This project keeps them separate on purpose:
 
 - **What a client is allowed to send** and **what the database stores**
