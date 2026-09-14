@@ -106,7 +106,7 @@ scripts/                 one-off/operational scripts — always present, plus
 No `schemas/`: unlike `rest-api`, there's no separate request/response
 contract to declare — the in-memory layer's `Todo` is a plain
 `@dataclass` defined right in `routes/todos.py` (nothing else uses it),
-and the DB-backed layers use their `models/todos.py` `Todo` directly as
+and the DB-backed layers use their `models/example.py` `Todo` directly as
 the template context object.
 
 Also no `core/templates.py` (fastapi/full-stack has one): Flask's

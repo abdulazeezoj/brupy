@@ -497,7 +497,7 @@ def test_rest_api_sqlite_sqlmodel_with_migrations(tmp_path: Path):
 
     assert Path("src/my_api/core/db.py") in created
     assert Path("src/my_api/models/__init__.py") in created
-    assert Path("src/my_api/models/items.py") in created
+    assert Path("src/my_api/models/example.py") in created
     assert Path("alembic.ini") in created
     assert Path("alembic/env.py") in created
     assert Path("alembic/script.py.mako") in created
@@ -597,7 +597,7 @@ def test_rest_api_all_features_combined(tmp_path: Path):
     for expected in [
         "src/my_api/core/db.py",
         "src/my_api/models/__init__.py",
-        "src/my_api/models/items.py",
+        "src/my_api/models/example.py",
         "alembic.ini",
         "src/my_api/worker.py",
         "src/my_api/scheduler.py",
@@ -778,13 +778,13 @@ def test_full_stack_sqlite_sqlmodel_with_migrations(tmp_path: Path):
 
     assert Path("src/my_api/core/db.py") in created
     assert Path("src/my_api/models/__init__.py") in created
-    assert Path("src/my_api/models/todos.py") in created
+    assert Path("src/my_api/models/example.py") in created
     assert Path("alembic.ini") in created
     assert Path("alembic/env.py") in created
 
     routes = (target / "src/my_api/routes/todos.py").read_text()
     assert "get_session" in routes
-    models_py = (target / "src/my_api/models/todos.py").read_text()
+    models_py = (target / "src/my_api/models/example.py").read_text()
     assert "class Todo" in models_py
 
     env_py = (target / "alembic/env.py").read_text()
@@ -804,7 +804,7 @@ def test_full_stack_postgres_sqlalchemy_no_migrations(tmp_path: Path):
     assert Path("src/my_api/core/db.py") in created
     assert Path("alembic.ini") not in created
 
-    models_py = (target / "src/my_api/models/todos.py").read_text()
+    models_py = (target / "src/my_api/models/example.py").read_text()
     assert "class Todo(Base)" in models_py
     env_file = (target / ".env").read_text()
     assert "postgresql+asyncpg://" in env_file
@@ -863,7 +863,7 @@ def test_full_stack_all_features_combined(tmp_path: Path):
     for expected in [
         "src/my_api/core/db.py",
         "src/my_api/models/__init__.py",
-        "src/my_api/models/todos.py",
+        "src/my_api/models/example.py",
         "alembic.ini",
         "src/my_api/worker.py",
         "src/my_api/scheduler.py",

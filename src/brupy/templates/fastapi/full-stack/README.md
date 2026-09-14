@@ -106,7 +106,7 @@ scripts/                 one-off/operational scripts — always present, plus
 No `schemas/`: unlike `rest-api`, there's no separate request/response
 contract to declare — the in-memory layer's `Todo` is a plain
 `@dataclass` defined right in `routes/todos.py` (nothing else uses it),
-and the DB-backed layers use their `models/todos.py` `Todo` directly as
+and the DB-backed layers use their `models/example.py` `Todo` directly as
 the template context object. Adding one back is a reasonable next step
 if a future resource needs input validation beyond "a required `title`
 field," but it would be dead weight for what this template ships today.

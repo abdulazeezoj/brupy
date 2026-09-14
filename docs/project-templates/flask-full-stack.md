@@ -97,7 +97,7 @@ StaticFiles(...))`; this template needs neither.
 No `schemas/`: unlike `rest-api`, there's no request/response contract
 to validate manually via `.model_validate()`/`.model_dump()`. The
 in-memory layer's `Todo` is a plain `@dataclass` defined right in
-`routes/todos.py`; the DB-backed layers pass their `models/todos.py`
+`routes/todos.py`; the DB-backed layers pass their `models/example.py`
 `Todo` straight into `render_template(...)` as the context object.
 
 ## Why `templates/` and `static/` files have no `.jinja` suffix

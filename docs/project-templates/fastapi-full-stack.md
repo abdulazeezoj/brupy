@@ -75,7 +75,7 @@ See [Styling](#styling-cssvanilla-vs-csstailwind) below.
 No `schemas/`: there's no separate request/response contract to
 declare the way `rest-api` needs one for its JSON payloads. The
 in-memory layer's `Todo` is a plain `@dataclass` defined right in
-`routes/todos.py`; the DB-backed layers pass their `models/todos.py`
+`routes/todos.py`; the DB-backed layers pass their `models/example.py`
 `Todo` straight into the template as the render context. One fewer
 package, one fewer thing to keep in sync, because this template
 genuinely has no use for it.

@@ -304,12 +304,12 @@ Creating my-api/ from fastapi/rest-api...
   ✔ src/my_api/core/db.py
   ✔ src/my_api/main.py
   ✔ src/my_api/models/__init__.py
-  ✔ src/my_api/models/items.py
+  ✔ src/my_api/models/example.py
   ✔ src/my_api/routes/__init__.py
   ✔ src/my_api/routes/items.py
   ✔ src/my_api/scheduler.py
   ✔ src/my_api/schemas/__init__.py
-  ✔ src/my_api/schemas/items.py
+  ✔ src/my_api/schemas/example.py
   ✔ src/my_api/tasks/__init__.py
   ✔ src/my_api/tasks/example.py
   ✔ src/my_api/worker.py

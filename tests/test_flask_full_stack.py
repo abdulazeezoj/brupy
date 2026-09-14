@@ -147,12 +147,12 @@ class TestFullStackRender:
 
         assert Path("src/my_api/core/db.py") in created
         assert Path("src/my_api/models/__init__.py") in created
-        assert Path("src/my_api/models/todos.py") in created
+        assert Path("src/my_api/models/example.py") in created
         assert Path("migrations/env.py") in created
 
         routes = (target / "src/my_api/routes/todos.py").read_text()
         assert "db.session" in routes
-        models_py = (target / "src/my_api/models/todos.py").read_text()
+        models_py = (target / "src/my_api/models/example.py").read_text()
         assert "class Todo" in models_py
         db_py = (target / "src/my_api/core/db.py").read_text()
         assert "Migrate" in db_py  # migrations layer overrides core/db.py
@@ -170,7 +170,7 @@ class TestFullStackRender:
         assert Path("src/my_api/core/db.py") in created
         assert Path("migrations/env.py") not in created
 
-        models_py = (target / "src/my_api/models/todos.py").read_text()
+        models_py = (target / "src/my_api/models/example.py").read_text()
         assert "class Todo(Base)" in models_py
         db_py = (target / "src/my_api/core/db.py").read_text()
         assert "scoped_session" in db_py
@@ -219,7 +219,7 @@ class TestFullStackRender:
         for expected in [
             "src/my_api/core/db.py",
             "src/my_api/models/__init__.py",
-            "src/my_api/models/todos.py",
+            "src/my_api/models/example.py",
             "src/my_api/worker.py",
             "src/my_api/scheduler.py",
             "src/my_api/tasks/example.py",
